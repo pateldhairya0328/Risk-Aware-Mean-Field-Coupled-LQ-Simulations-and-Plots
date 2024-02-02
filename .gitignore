@@ -1,0 +1,57 @@
+# Generically ignore any files stored in a build (sub)directory.
+**/build/
+
+# Ignore generated simulation CSV data.
+Simulation Data/
+
+# Ignore generated figures.
+Figures/
+
+# LaTeX compilation output and auxilliary files.
+## LaTeX.
+*.log
+*.aux
+*.toc
+*.fls
+## Lists.
+*.loe
+*.lof
+*.lot
+## Index.
+*.idx
+*.ind
+*.ilg
+## Glossary.
+*.glo
+*.gls
+*.glg
+## BibTeX.
+*.bbl
+*.blg
+## SyncTeX.
+*.synctex.gz
+## hyperref package.
+*.out
+## svn-multi package.
+*.svn
+*.svt
+*.svx
+## standalone package.
+*.sta
+*.stp
+## latexmk package.
+*.fdb_latexmk
+## endfloat package.
+*.fff
+## beamer package.
+*.nav
+*.vrb
+*.snm
+## pgfplots/tikz package.
+*.dep
+*.dpth
+*.auxlock
+## LaTeX output files.
+*.dvi
+*.pdf
+*.xdv

@@ -1,0 +1,46 @@
+\tikzsetnextfilename{lambda_varying_control_effort_quantiles}
+\begin{tikzpicture}[transparency group=knockout]
+    \begin{axis}[
+            xmode = log,
+            xmin = 1e-5,
+            xmax =  1e3,
+            ymin =    0,
+            ymax = 1000,
+            xlabel = {\(\lambda\)},
+            ylabel = {Control Effort},
+            title = {Time Average of Control Effort Statistics vs. \(\lambda\)},
+            grid = major,
+            label style = {font = \small},
+            tick label style = {font = \small},
+            legend style = {
+                font = \small,
+                at = {(0.97, 0.6)},
+                anchor = east
+            },
+            legend cell align = {left},
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm
+        ]
+
+        \foreach \i in {0, ..., \maxindextwo} {
+            \pgfmathsetmacro{\currenttype}{{\types}[\i]}
+            \pgfmathsetmacro{\currentcolor}{{\colorgrouptwo}[\i]}
+            \pgfmathsetmacro{\currentlabel}{{\labelgrouptwo}[\i]}
+
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \currentcolor] table [col sep = comma, header = true, x = lambda, y = mean] {Simulation Data/lambda_varying_\currenttype_control_effort.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25]   {Simulation Data/lambda_varying_\currenttype_control_effort.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]   {Simulation Data/lambda_varying_\currenttype_control_effort.csv};
+            \edef\temp{\noexpand \addplot [\currentcolor, fill opacity = 0.5]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 2.5]  {Simulation Data/lambda_varying_\currenttype_control_effort.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 97.5] {Simulation Data/lambda_varying_\currenttype_control_effort.csv};
+            \edef\temp{\noexpand \addplot [\currentcolor, fill opacity = 0.25] fill between [of = lo and hi];}\temp
+
+            \addlegendentryexpanded{\currentlabel}
+            \addlegendentry{\(50\%\) interval}
+            \addlegendentry{\(95\%\) interval}
+        }
+    \end{axis}
+\end{tikzpicture}
