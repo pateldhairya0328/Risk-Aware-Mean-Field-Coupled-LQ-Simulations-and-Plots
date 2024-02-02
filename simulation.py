@@ -1,5 +1,6 @@
-import numpy as np
 import csv
+import numpy as np
+import os
 
 def compute_feedback_and_affine_terms(Ax, Az, B, Qx, Qz, R, µ, Σ, γ, λ):
     """
@@ -41,7 +42,7 @@ def compute_optimal_trajectory(x_0, w, A, B, C, Kx, Kz, f):
     k = len(x_0)
     T = len(w)
 
-    u  = np.zeros((T, k))
+    u  = np.zeros((T + 1, k))
     x  = np.zeros((T + 1, k))
     z  = np.zeros((T + 1))
 
@@ -55,15 +56,15 @@ def compute_optimal_trajectory(x_0, w, A, B, C, Kx, Kz, f):
 
     return [u, x, z]
 
-def write_info_to_csv(independent_var, independent_var_name, file_name, data):
+def write_data_to_csv(independent_var, independent_var_name, file_name, data):
     """
     Save the quantiles, mean, and standard deviation of the data to a csv file.
     """
-    header_row = [independent_var_name] + np.arange(101).astype(int).tolist() + ['mean', 'stddev']
-    table_rows = [independent_var] + [None] * 101 + [np.mean(data, axis=1), np.std(data, axis=1)]
+    header_row = [independent_var_name] + [f'{x / 2:0.1f}'.rstrip('0').rstrip('.') for x in range(201)] + ['mean', 'stddev']
+    table_rows = [independent_var] + [None] * 201 + [np.mean(data, axis=1), np.std(data, axis=1)]
 
-    for i in range(101):
-        table_rows[i + 1] = np.quantile(data, i / 100.0, axis=1)
+    for i in range(201):
+        table_rows[i + 1] = np.quantile(data, i / 200.0, axis=1)
 
     with open(file_name, 'w', newline='') as file:
         writer = csv.writer(file, delimiter=',')
@@ -72,6 +73,8 @@ def write_info_to_csv(independent_var, independent_var_name, file_name, data):
 
 if __name__ == '__main__':
     ## Parameters.
+    print('Setting parameters and generating data...')
+
     k = 250 # Number of subsystems.
     T = 50 # Number of time steps.
     ts = np.arange(T + 1)
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     C = [0.2] * np.ones(T)
     P = [0.4] * np.ones(T + 1)
     Q = [0.8] * np.ones(T + 1)
-    R = [1.2] * np.ones(T)
+    R = [1.2] * np.ones(T + 1)
 
     p = 0.25 # Bernoulli distribution parameter.
     shift = - p # Amount to shift Bernoulli distribution.
@@ -105,53 +108,81 @@ if __name__ == '__main__':
     # Generate fixed initial states.
     x_0 = np.random.normal(μ_x_0, Σ_x_0, k)
 
-    ## Run simulations.
-    # Simulate for select values of λ to find performance of controller vs. time.
-    avg_state_energy   = np.zeros((T, N))
-    max_state_energy   = np.zeros((T, N))
-    avg_control_effort = np.zeros((T, N))
-    max_control_effort = np.zeros((T, N))
+    print('Done!')
 
-    for λ in [0, 0.01, 0.05, 0.1, 0.2, 0.5, 1.0]:
-        [Kx, Kz, f] = compute_feedback_and_affine_terms(A, A + C, B, Q, P + Q, R, µ, Σ, γ, λ)
+    ## Run simulations.
+    print('Running simulations...')
+
+    # Simulate for select values of λ to find performance of controller vs. time.
+    print('\tRunning simulations to generate statistics vs. t...')
+
+    λ     = [0, 0.001, 0.002, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1]
+    λ_num = len(λ)
+
+    avg_state_energy   = np.zeros((T + 1, N))
+    max_state_energy   = np.zeros((T + 1, N))
+    avg_control_effort = np.zeros((T + 1, N))
+    max_control_effort = np.zeros((T + 1, N))
+
+    for i in range(λ_num):
+        [Kx, Kz, f] = compute_feedback_and_affine_terms(A, A + C, B, Q, P + Q, R, µ, Σ, γ, λ[i])
+        λ_str = str(λ[i]).replace('.', '_')
+
         for n in range(N):
+            print(f'\t\tλ = {λ[i]:0.3f} ({i + 1} of {λ_num}): {100 * n / N:.2f}%', end='\r', flush=True)
+
             [u, x, z] = compute_optimal_trajectory(x_0, ws[n], A, B, C, Kx, Kz, f)
-            state_energies  = (x * Q[:, None] * x)[1:]
-            control_efforts = (u * R[:, None] * u)[:T]
+            state_energies  = x * Q[:, None] * x
+            control_efforts = u * R[:, None] * u
             avg_state_energy[:, n]   = np.mean(state_energies,  axis=1)
             max_state_energy[:, n]   = np.max(state_energies,   axis=1)
             avg_control_effort[:, n] = np.mean(control_efforts, axis=1)
             max_control_effort[:, n] = np.max(control_efforts,  axis=1)
 
-        write_info_to_csv(ts[1:], 't', 'Simulation Data/avg_state_energy_vs_time_lambda_'   + str(λ) + '.csv', avg_state_energy)
-        write_info_to_csv(ts[1:], 't', 'Simulation Data/max_state_energy_vs_time_lambda_'   + str(λ) + '.csv', max_state_energy)
-        write_info_to_csv(ts[:T], 't', 'Simulation Data/avg_control_effort_vs_time_lambda_' + str(λ) + '.csv', avg_control_effort)
-        write_info_to_csv(ts[:T], 't', 'Simulation Data/max_control_effort_vs_time_lambda_' + str(λ) + '.csv', max_control_effort)
+        os.makedirs(os.path.dirname(fr'Simulation Data/lambda_{λ_str}/'), exist_ok=True)
+        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_avg_state_energy.csv',   avg_state_energy)
+        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_max_state_energy.csv',   max_state_energy)
+        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_avg_control_effort.csv', avg_control_effort)
+        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_max_control_effort.csv', max_control_effort)
 
-    # # Simulate for range of λ to find performance of controller vs. λ.
-    # λ_num     = 180
-    # λ_min_pow = - 5
-    # λ_max_pow =   3
-    # λ = np.logspace(λ_min_pow, λ_max_pow, λ_num)
+        print(f'\t\tλ = {λ[i]:0.3f} ({i + 1} of {λ_num}): 100.00%')
 
-    # avg_state_energy   = np.zeros((len(λ), N))
-    # max_state_energy   = np.zeros((len(λ), N))
-    # avg_control_effort = np.zeros((len(λ), N))
-    # max_control_effort = np.zeros((len(λ), N))
+    print('\tDone!')
 
-    # for i in range(len(λ)):
-    #     print(λ[i])
-    #     [Kx, Kz, f] = compute_feedback_and_affine_terms(A, A + C, B, Q, P + Q, R, µ, Σ, γ, λ[i])
-    #     for n in range(N):
-    #         [u, x, z] = compute_optimal_trajectory(x_0, ws[n], A, B, C, Kx, Kz, f)
-    #         state_energies  = (x * Q[:, None] * x)[1:]
-    #         control_efforts = (u * R[:, None] * u)[:T]
-    #         avg_state_energy[i, n]   = np.mean(np.mean(state_energies,  axis=1))
-    #         max_state_energy[i, n]   = np.mean(np.max(state_energies,   axis=1))
-    #         avg_control_effort[i, n] = np.mean(np.mean(control_efforts, axis=1))
-    #         max_control_effort[i, n] = np.mean(np.max(control_efforts,  axis=1))
+    # Simulate for range of λ to find performance of controller vs. λ.
+    print('\tRunning simulations to generate time average of statistics vs. λ...')
 
-    # write_info_to_csv(λ, 'lambda', 'Simulation Data/avg_state_energy_vs_lambda.csv',   avg_state_energy)
-    # write_info_to_csv(λ, 'lambda', 'Simulation Data/max_state_energy_vs_lambda.csv',   max_state_energy)
-    # write_info_to_csv(λ, 'lambda', 'Simulation Data/avg_control_effort_vs_lambda.csv', avg_control_effort)
-    # write_info_to_csv(λ, 'lambda', 'Simulation Data/max_control_effort_vs_lambda.csv', max_control_effort)
+    λ_min_pow = - 5
+    λ_max_pow =   3
+    λ_num     = (λ_max_pow - λ_min_pow + 1) * 20 # Gives 20 divisions of each power of 10 step.
+    λ         = np.logspace(λ_min_pow, λ_max_pow, λ_num)
+
+    avg_state_energy   = np.zeros((λ_num, N))
+    max_state_energy   = np.zeros((λ_num, N))
+    avg_control_effort = np.zeros((λ_num, N))
+    max_control_effort = np.zeros((λ_num, N))
+
+    for i in range(λ_num):
+        [Kx, Kz, f] = compute_feedback_and_affine_terms(A, A + C, B, Q, P + Q, R, µ, Σ, γ, λ[i])
+
+        for n in range(N):
+            print(f'\t\tλ = {λ[i]:0.6f} ({i + 1} of {λ_num}): {100 * n / N:.2f}%', end='\r', flush=True)
+
+            [u, x, z] = compute_optimal_trajectory(x_0, ws[n], A, B, C, Kx, Kz, f)
+            state_energies  = (x * Q[:, None] * x)[1:]
+            control_efforts = (u * R[:, None] * u)[:T]
+            avg_state_energy[i, n]   = np.mean(np.mean(state_energies,  axis=1))
+            max_state_energy[i, n]   = np.mean(np.max(state_energies,   axis=1))
+            avg_control_effort[i, n] = np.mean(np.mean(control_efforts, axis=1))
+            max_control_effort[i, n] = np.mean(np.max(control_efforts,  axis=1))
+
+        print(f'\t\tλ = {λ[i]:0.6f} ({i + 1} of {λ_num}): 100.00%')
+
+    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_avg_state_energy.csv',   avg_state_energy)
+    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_max_state_energy.csv',   max_state_energy)
+    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_avg_control_effort.csv', avg_control_effort)
+    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_max_control_effort.csv', max_control_effort)
+
+    print('\tDone!')
+
+    print('Done!')
