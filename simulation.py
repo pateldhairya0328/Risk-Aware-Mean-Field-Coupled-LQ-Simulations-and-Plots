@@ -113,6 +113,16 @@ if __name__ == '__main__':
     ## Run simulations.
     print('Running simulations...')
 
+    os.makedirs(os.path.dirname(fr'data'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/control_effort'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/control_effort/vs_lambda'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/control_effort/vs_time/avg'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/control_effort/vs_time/max'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/state_energy'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/state_energy/vs_lambda'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/state_energy/vs_time/avg'), exist_ok=True)
+    os.makedirs(os.path.dirname(fr'data/state_energy/vs_time/max'), exist_ok=True)
+
     # Simulate for select values of λ to find performance of controller vs. time.
     print('\tRunning simulations to generate statistics vs. t...')
 
@@ -139,11 +149,10 @@ if __name__ == '__main__':
             avg_control_effort[:, n] = np.mean(control_efforts, axis=1)
             max_control_effort[:, n] = np.max(control_efforts,  axis=1)
 
-        os.makedirs(os.path.dirname(fr'Simulation Data/lambda_{λ_str}/'), exist_ok=True)
-        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_avg_state_energy.csv',   avg_state_energy)
-        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_max_state_energy.csv',   max_state_energy)
-        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_avg_control_effort.csv', avg_control_effort)
-        write_data_to_csv(ts, 't', fr'Simulation Data/lambda_{λ_str}/time_varying_max_control_effort.csv', max_control_effort)
+        write_data_to_csv(ts, 't', fr'data/state_energy/vs_time/avg/{λ_str}.csv',   avg_state_energy)
+        write_data_to_csv(ts, 't', fr'data/state_energy/vs_time/max/{λ_str}.csv',   max_state_energy)
+        write_data_to_csv(ts, 't', fr'data/control_effort/vs_time/avg/{λ_str}.csv', avg_control_effort)
+        write_data_to_csv(ts, 't', fr'data/control_effort/vs_time/max/{λ_str}.csv', max_control_effort)
 
         print(f'\t\tλ = {λ[i]:0.3f} ({i + 1} of {λ_num}): 100.00%')
 
@@ -178,10 +187,10 @@ if __name__ == '__main__':
 
         print(f'\t\tλ = {λ[i]:0.6f} ({i + 1} of {λ_num}): 100.00%')
 
-    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_avg_state_energy.csv',   avg_state_energy)
-    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_max_state_energy.csv',   max_state_energy)
-    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_avg_control_effort.csv', avg_control_effort)
-    write_data_to_csv(λ, 'lambda', 'Simulation Data/lambda_varying_max_control_effort.csv', max_control_effort)
+    write_data_to_csv(ts, 't', fr'data/state_energy/vs_lambda/avg.csv',   avg_state_energy)
+    write_data_to_csv(ts, 't', fr'data/state_energy/vs_lambda/max.csv',   max_state_energy)
+    write_data_to_csv(ts, 't', fr'data/control_effort/vs_lambda/avg.csv', avg_control_effort)
+    write_data_to_csv(ts, 't', fr'data/control_effort/vs_lambda/max.csv', max_control_effort)
 
     print('\tDone!')
 
