@@ -6,106 +6,211 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{graphicx}
+\usepackage{ifthen}
 \usepackage{tabularray}
 \usepackage[x11names]{xcolor}
 \usepackage{pgfplots} % Must be loaded after the xcolor package.
 \usepackage{tikz} % Must be loaded after the xcolor package.
+\usepackage{xstring}
 
 % PGFPlots configuration.
 \pgfplotsset{compat=1.18}
 \usepgfplotslibrary{fillbetween}
 \usetikzlibrary{external}
+\tikzexternalize[prefix=figures/]
 
-\def\lambdas{"0", "0_1", "1"}
-\def\colorgroupone{"SpringGreen4", "DodgerBlue2", "MediumOrchid2"}
-\def\labelgroupone{"\(\lambda = 0\)", "\(\lambda = 0.1\)", "\(\lambda = 1\)"}
-\def\maxindexone{2} % Should be one less than the number of lambdas/colorgroupone/labelgroupone.
+\newcommand{\lambdas}{"0", "0_1", "1"}
+\newcommand{\lambdacolors}{"SpringGreen4", "DodgerBlue2", "MediumOrchid2"}
+\newcommand{\lambdalabels}{"\(\lambda = 0\)", "\(\lambda = 0.1\)", "\(\lambda = 1\)"}
+\newcommand{\lambdamaxindex}{2} % Should be one less than the number of lambdas.
 
-\def\types{"max", "avg"}
-\def\colorgrouptwo{"Firebrick2", "DarkOrange1"}
-\def\labelgrouptwo{"\(\frac{1}{T} \sum_{t = 1}^T \max_i \{{x_t^i}^\top Q_t {x_t^i}\}\)",
-                   "\(\frac{1}{T} \sum_{t = 1}^T \frac{1}{k} \sum_{i = 1}^k {x_t^i}^\top Q_t {x_t^i}\)"}
-\def\maxindextwo{1} % Should be one less than the number of types/colorgrouptwo/labelgrouptwo.
+\newcommand{\types}{"max", "avg"}
+\newcommand{\typecolors}{"Firebrick2", "DarkOrange1"}
+\newcommand{\typelabels}{"\(\frac{1}{T} \sum_{t = 1}^T \max_i \{{x_t^i}^\top Q_t {x_t^i}\}\)", "\(\frac{1}{T} \sum_{t = 1}^T \frac{1}{k} \sum_{i = 1}^k {x_t^i}^\top Q_t {x_t^i}\)"}
+\newcommand{\typemaxindex}{1} % Should be one less than the number of types.
+
+\newcommand{\parentpath}{}
+
+\newcommand{\figuretitle}{}
+\newcommand{\xlabel}{}
+\newcommand{\ylabel}{}
+\newcommand{\xmin}{}
+\newcommand{\xmax}{}
+\newcommand{\ymin}{}
+\newcommand{\ymax}{}
+\newcommand{\xmode}{}
+\newcommand{\ymode}{}
+\newcommand{\legendstyle}{{font = \small}}
+\newcommand{\maxlegendcolumns}{}
+
+\newcommand{\independentvar}{}
+\newcommand{\params}{}
+\newcommand{\colors}{}
+\newcommand{\labels}{}
+\newcommand{\maxindex}{}
 
 \begin{document}
 
-\begin{tblr}{
-        colspec = {X[-1,c,m] X[-1,c,m] X[-1,c,m] X[h, r] X[h, r] X[h, r] X[h, r] X[h, r]},
-        row{1} = {mode=text, c},
-        hline{2} = {1pt, solid, black},
-        vline{2} = {1pt, solid, black},
-        hline{3-Y} = {1pt, solid, Snow2},
-        vline{3-Y} = {1pt, solid, Snow2},
-        cell{2}{1} = {r=3}{},
-        cell{2}{2} = {r=2}{},
-        cell{4}{2} = {c=2}{},
-        cell{5}{1} = {r=3}{},
-        cell{5}{2} = {r=2}{},
-        cell{7}{2} = {c=2}{},
+% State Energy Plots.
+{
+    % Plots vs. \(t\).
+    {
+        \renewcommand{\independentvar}{t}
+        \renewcommand{\params}{\lambdas}
+        \renewcommand{\colors}{\lambdacolors}
+        \renewcommand{\labels}{\lambdalabels}
+        \renewcommand{\maxindex}{\lambdamaxindex}
+
+        \renewcommand{\xlabel}{\(t\)}
+        \renewcommand{\xmode}{normal}
+        \renewcommand{\ymode}{normal}
+        \renewcommand{\xmin}{0}
+        \renewcommand{\xmax}{50}
+        \renewcommand{\legendstyle}{{font = \small, at = {(0.03, 0.97)}, anchor = north west}}
+        \renewcommand{\maxlegendcolumns}{3}
+
+        % Plot of Average of Quantity Across Subsystems.
+        {
+            \renewcommand{\figuretitle}{Average Subsystem State Energy vs. \(t\)}
+            \renewcommand{\ylabel}{\(\frac{1}{k} \sum_{i = 1}^k {x_t^i}^\top Q_t {x_t^i}\)}
+            \renewcommand{\ymin}{0}
+            \renewcommand{\ymax}{100}
+
+            \renewcommand{\parentpath}{data/state_energy/vs_time/avg}
+
+            \input{templates/simple.tikz}%
+            \input{templates/stddev.tikz}%
+            \input{templates/quantiles.tikz}%
+            \input{templates/max_range.tikz}%
+            % \input{templates/density.tikz}
+        }
+
+        % Plot of Maximum of Quantity Across Subsystems.
+        {
+            \renewcommand{\figuretitle}{Average Subsystem State Energy vs. \(t\)}
+            \renewcommand{\ylabel}{\(\max_i \{{x_t^i}^\top Q_t {x_t^i}\}\)}
+            \renewcommand{\ymin}{0}
+            \renewcommand{\ymax}{1000}
+
+            \renewcommand{\parentpath}{data/state_energy/vs_time/max}
+
+            \input{templates/simple.tikz}%
+            \input{templates/stddev.tikz}%
+            \input{templates/quantiles.tikz}%
+            \input{templates/max_range.tikz}%
+            % \input{templates/density.tikz}
+        }
     }
 
-                                                                                    &
-                                                                                    &
-                                                                                    &
-    Simple                                                                          &
-    \(\pm 1\) Standard Deviation                                                    &
-    Maximum Range                                                                   &
-    Quantiles                                                                       &
-    Density                                                                         \\
+    % Plots vs \(\lambda\).
+    {
+        \renewcommand{\independentvar}{lambda}
+        \renewcommand{\params}{\types}
+        \renewcommand{\colors}{\typecolors}
+        \renewcommand{\labels}{\typelabels}
+        \renewcommand{\maxindex}{\typemaxindex}
 
-    \rotatebox{90}{State Energy}                                                    &
-    \rotatebox{90}{Plotted vs. Time \(t\)}                                          &
-    \rotatebox{90}{Average}                                                         &
-    \input{TikZ Figures/Time Varying/State Energy/Average/simple.tikz}              &
-    \input{TikZ Figures/Time Varying/State Energy/Average/plus_minus_stddev.tikz}   &
-    \input{TikZ Figures/Time Varying/State Energy/Average/maximum_range.tikz}       &
-    \input{TikZ Figures/Time Varying/State Energy/Average/quantiles.tikz}           &
-    \input{TikZ Figures/Time Varying/State Energy/Average/density.tikz}             \\
+        \renewcommand{\figuretitle}{Time Average of State Energy Statistics}
+        \renewcommand{\ylabel}{State Energy}
+        \renewcommand{\xlabel}{\(\lambda\)}
+        \renewcommand{\xmode}{log}
+        \renewcommand{\ymode}{normal}
+        \renewcommand{\xmin}{1e-5}
+        \renewcommand{\xmax}{1e3}
+        \renewcommand{\ymin}{0}
+        \renewcommand{\ymax}{500}
+        \renewcommand{\legendstyle}{{font = \small, at = {(0.97, 0.6)}, anchor = east}}
+        \renewcommand{\maxlegendcolumns}{1}
 
-                                                                                    &
-                                                                                    &
-    \rotatebox{90}{Maximum}                                                         &
-    \input{TikZ Figures/Time Varying/State Energy/Maximum/simple.tikz}              &
-    \input{TikZ Figures/Time Varying/State Energy/Maximum/plus_minus_stddev.tikz}   &
-    \input{TikZ Figures/Time Varying/State Energy/Maximum/maximum_range.tikz}       &
-    \input{TikZ Figures/Time Varying/State Energy/Maximum/quantiles.tikz}           &
-    \input{TikZ Figures/Time Varying/State Energy/Maximum/density.tikz}             \\
+        \renewcommand{\parentpath}{data/state_energy/vs_lambda}
 
-                                                                                    &
-    \rotatebox{90}{Plotted vs. Risk-Parameter \(\lambda\)}                          &
-                                                                                    &
-    \input{TikZ Figures/Lambda Varying/State Energy/simple.tikz}                    &
-    \input{TikZ Figures/Lambda Varying/State Energy/plus_minus_stddev.tikz}         &
-    \input{TikZ Figures/Lambda Varying/State Energy/maximum_range.tikz}             &
-    \input{TikZ Figures/Lambda Varying/State Energy/quantiles.tikz}                 &
-    \input{TikZ Figures/Lambda Varying/State Energy/density.tikz}                   \\
+        \input{templates/simple.tikz}%
+        \input{templates/stddev.tikz}%
+        \input{templates/quantiles.tikz}%
+        \input{templates/max_range.tikz}%
+        % \input{templates/density.tikz}
+    }
+}
 
-    \rotatebox{90}{Control Effort}                                                  &
-    \rotatebox{90}{Plotted vs. Time \(t\)}                                          &
-    \rotatebox{90}{Average}                                                         &
-    \input{TikZ Figures/Time Varying/Control Effort/Average/simple.tikz}            &
-    \input{TikZ Figures/Time Varying/Control Effort/Average/plus_minus_stddev.tikz} &
-    \input{TikZ Figures/Time Varying/Control Effort/Average/maximum_range.tikz}     &
-    \input{TikZ Figures/Time Varying/Control Effort/Average/quantiles.tikz}         &
-    \input{TikZ Figures/Time Varying/Control Effort/Average/density.tikz}           \\
+% Control Effort Plots.
+{
+    % Plots vs. \(t\).
+    {
+        \renewcommand{\independentvar}{t}
+        \renewcommand{\params}{\lambdas}
+        \renewcommand{\colors}{\lambdacolors}
+        \renewcommand{\labels}{\lambdalabels}
+        \renewcommand{\maxindex}{\lambdamaxindex}
 
-                                                                                    &
-                                                                                    &
-    \rotatebox{90}{Maximum}                                                         &
-    \input{TikZ Figures/Time Varying/Control Effort/Maximum/simple.tikz}            &
-    \input{TikZ Figures/Time Varying/Control Effort/Maximum/plus_minus_stddev.tikz} &
-    \input{TikZ Figures/Time Varying/Control Effort/Maximum/maximum_range.tikz}     &
-    \input{TikZ Figures/Time Varying/Control Effort/Maximum/quantiles.tikz}         &
-    \input{TikZ Figures/Time Varying/Control Effort/Maximum/density.tikz}           \\
+        \renewcommand{\xlabel}{\(t\)}
+        \renewcommand{\xmode}{normal}
+        \renewcommand{\ymode}{normal}
+        \renewcommand{\xmin}{0}
+        \renewcommand{\xmax}{50}
+        \renewcommand{\legendstyle}{{font = \small, at = {(0.97, 0.97)}, anchor = north east}}
+        \renewcommand{\maxlegendcolumns}{3}
 
-                                                                                    &
-    \rotatebox{90}{Plotted vs. Risk-Parameter \(\lambda\)}                          &
-                                                                                    &
-    \input{TikZ Figures/Lambda Varying/Control Effort/simple.tikz}                  &
-    \input{TikZ Figures/Lambda Varying/Control Effort/plus_minus_stddev.tikz}       &
-    \input{TikZ Figures/Lambda Varying/Control Effort/maximum_range.tikz}           &
-    \input{TikZ Figures/Lambda Varying/Control Effort/quantiles.tikz}               &
-    \input{TikZ Figures/Lambda Varying/Control Effort/density.tikz}
-\end{tblr}
+        % Plot of Average of Quantity Across Subsystems.
+        {
+            \renewcommand{\figuretitle}{Average Subsystem Control Effort vs. \(t\)}
+            \renewcommand{\ylabel}{\(\frac{1}{k} \sum_{i = 1}^k {u_t^i}^\top R_t {u_t^i}\)}
+            \renewcommand{\ymin}{0}
+            \renewcommand{\ymax}{500}
+
+            \renewcommand{\parentpath}{data/control_effort/vs_time/avg}
+
+            \input{templates/simple.tikz}%
+            \input{templates/stddev.tikz}%
+            \input{templates/quantiles.tikz}%
+            \input{templates/max_range.tikz}%
+            % \input{templates/density.tikz}
+        }
+
+        % Plot of Maximum of Quantity Across Subsystems.
+        {
+            \renewcommand{\figuretitle}{Average Subsystem Control Effort vs. \(t\)}
+            \renewcommand{\ylabel}{\(\max_i \{{u_t^i}^\top R_t {u_t^i}\}\)}
+            \renewcommand{\ymin}{0}
+            \renewcommand{\ymax}{2000}
+
+            \renewcommand{\parentpath}{data/control_effort/vs_time/max}
+
+            \input{templates/simple.tikz}%
+            \input{templates/stddev.tikz}%
+            \input{templates/quantiles.tikz}%
+            \input{templates/max_range.tikz}%
+            % \input{templates/density.tikz}
+        }
+    }
+
+    % Plots vs \(\lambda\).
+    {
+        \renewcommand{\independentvar}{lambda}
+        \renewcommand{\params}{\types}
+        \renewcommand{\colors}{\typecolors}
+        \renewcommand{\labels}{\typelabels}
+        \renewcommand{\maxindex}{\typemaxindex}
+
+        \renewcommand{\figuretitle}{Time Average of Control Effort Statistics}
+        \renewcommand{\ylabel}{Control Effort}
+        \renewcommand{\xlabel}{\(\lambda\)}
+        \renewcommand{\xmode}{log}
+        \renewcommand{\ymode}{normal}
+        \renewcommand{\xmin}{1e-5}
+        \renewcommand{\xmax}{1e3}
+        \renewcommand{\ymin}{0}
+        \renewcommand{\ymax}{1000}
+        \renewcommand{\legendstyle}{{font = \small, at = {(0.97, 0.6)}, anchor = east}}
+        \renewcommand{\maxlegendcolumns}{1}
+
+        \renewcommand{\parentpath}{data/control_effort/vs_lambda}
+
+        \input{templates/simple.tikz}%
+        \input{templates/stddev.tikz}%
+        \input{templates/quantiles.tikz}%
+        \input{templates/max_range.tikz}%
+        % \input{templates/density.tikz}
+    }
+}
 
 \end{document}

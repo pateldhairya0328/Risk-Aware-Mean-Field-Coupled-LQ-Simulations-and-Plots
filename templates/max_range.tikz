@@ -1,0 +1,44 @@
+\StrSubstitute{\parentpath/max_range}{/}{_}[\tempstr]
+\tikzsetnextfilename{\tempstr}
+\begin{minipage}{12cm}
+    \raggedleft
+    \begin{tikzpicture}
+        \pgfmathsetmacro{\legendcolumns}{\pgfintmin{2}{\maxlegendcolumns}}
+        \begin{axis}[
+                title/.expand once = \figuretitle,
+                xlabel/.expand once = \xlabel,
+                ylabel/.expand once = \ylabel,
+                xmode/.expand once = \xmode,
+                ymode/.expand once = \ymode,
+                xmin/.expand once = \xmin,
+                xmax/.expand once = \xmax,
+                ymin/.expand once = \ymin,
+                ymax/.expand once = \ymax,
+                legend style/.expand once = \legendstyle,
+                legend columns/.expand once = \legendcolumns,
+                legend cell align = {left},
+                transpose legend,
+                label style = {font = \small},
+                tick label style = {font = \small},
+                scale only axis,
+                width = 10 cm,
+                height = 10 cm,
+                grid = major
+            ]
+
+            \foreach \i in {0, ..., \maxindex} {
+                \pgfmathsetmacro{\param}{{\params}[\i]}
+                \pgfmathsetmacro{\color}{{\colors}[\i]}
+                \pgfmathsetmacro{\label}{{\labels}[\i]}
+
+                \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = \independentvar, y = mean] {\parentpath/\param.csv};}\temp
+                \addlegendentryexpanded{\label}
+
+                \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = 0]   {\parentpath/\param.csv};
+                \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = 100] {\parentpath/\param.csv};
+                \edef\temp{\noexpand \addplot [\color, fill opacity = 0.5] fill between [of = lo and hi];}\temp
+                \addlegendentry{Max range}
+            }
+        \end{axis}
+    \end{tikzpicture}
+\end{minipage}

@@ -1,0 +1,37 @@
+\StrSubstitute{\parentpath/simple}{/}{_}[\tempstr]
+\tikzsetnextfilename{\tempstr}
+\begin{minipage}{12cm}
+    \raggedleft
+    \begin{tikzpicture}
+        \begin{axis}[
+                title/.expand once = \figuretitle,
+                xlabel/.expand once = \xlabel,
+                ylabel/.expand once = \ylabel,
+                xmode/.expand once = \xmode,
+                ymode/.expand once = \ymode,
+                xmin/.expand once = \xmin,
+                xmax/.expand once = \xmax,
+                ymin/.expand once = \ymin,
+                ymax/.expand once = \ymax,
+                legend style/.expand once = \legendstyle,
+                legend cell align = {left},
+                legend columns = 1,
+                label style = {font = \small},
+                tick label style = {font = \small},
+                scale only axis,
+                width = 10 cm,
+                height = 10 cm,
+                grid = major
+            ]
+
+            \foreach \i in {0, ..., \maxindex} {
+                \pgfmathsetmacro{\param}{{\params}[\i]}
+                \pgfmathsetmacro{\color}{{\colors}[\i]}
+                \pgfmathsetmacro{\label}{{\labels}[\i]}
+
+                \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = \independentvar, y = mean] {\parentpath/\param.csv};}\temp
+                \addlegendentryexpanded{\label}
+            }
+        \end{axis}
+    \end{tikzpicture}
+\end{minipage}

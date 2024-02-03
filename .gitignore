@@ -55,3 +55,6 @@ Figures/
 *.dvi
 *.pdf
 *.xdv
+
+# CSV files.
+*.csv
