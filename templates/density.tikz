@@ -32,22 +32,22 @@
                 \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = \independentvar, y = mean] {\parentpath/\param.csv};}\temp
                 \addlegendentryexpanded{\label}
 
-                % \foreach \j in {0, ..., 49} {
+                % \foreach \j in {0, 0.5, ..., 49.5} {
                 %     \pgfmathsetmacro{\lowerquantile}{int(\j)}
                 %     \pgfmathsetmacro{\upperquantile}{int(100 - \j)}
 
                 %     \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = \lowerquantile] {\parentpath/\param.csv};
                 %     \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = \upperquantile] {\parentpath/\param.csv};
-                %     \edef\temp{\noexpand \addplot [\color, fill opacity = 0.025, forget plot] fill between [of = lo and hi];}\temp
+                %     \edef\temp{\noexpand \addplot [\color, fill opacity = 0.0125, forget plot] fill between [of = lo and hi];}\temp
                 % }
 
-                \foreach \j in {0, 0.5, ..., 49.5} {
+                \foreach \j in {0, ..., 49} {
                     \pgfmathsetmacro{\lowerquantile}{int(\j)}
                     \pgfmathsetmacro{\upperquantile}{int(100 - \j)}
 
-                    \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = \lowerquantile] {\parentpath/param.csv};
-                    \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = \upperquantile] {\parentpath/param.csv};
-                    \edef\temp{\noexpand \addplot [\color, fill opacity = 0.0125, forget plot] fill between [of = lo and hi];}\temp
+                    \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = \lowerquantile] {\parentpath/\param.csv};
+                    \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = \independentvar, y = \upperquantile] {\parentpath/\param.csv};
+                    \edef\temp{\noexpand \addplot [\color, fill opacity = 0.025, forget plot] fill between [of = lo and hi];}\temp
                 }
             }
         \end{axis}
