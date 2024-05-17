@@ -1,0 +1,789 @@
+% LTeX: language=en-US
+
+% Make a figures subdirectory inside the build directory or else this won't work. Alternatively replace \tikzexternalize[prefix=figures/] with \tikzexternalize.
+
+\documentclass[varwidth=30cm]{standalone}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage[x11names]{xcolor}
+\usepackage{pgfplots} % Must be loaded after the xcolor package to avoid x11names option clash.
+\usepackage{tikz} % Must be loaded after the xcolor package to avoid x11names option clash.
+
+% PGFPlots configuration.
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{external, fillbetween}
+\tikzexternalize[prefix=figures/]
+
+\begin{document}
+
+% After running simulation.py to generate the data for the simulation with Bernoulli noise, rename the data/ directory to data_bernoulli/.
+
+\tikzsetnextfilename{rebuttal_figure_average_state_energy_vs_t_bernoulli}
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 1e2,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{x, \mathrm{avg}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_bernoulli/state_energy/vs_time/avg/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_bernoulli/state_energy/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_bernoulli/state_energy/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_bernoulli/state_energy/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_bernoulli/state_energy/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_bernoulli/state_energy/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_bernoulli/state_energy/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}%
+\tikzsetnextfilename{rebuttal_figure_maximum_state_energy_vs_t_bernoulli}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 1e3,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{x, \mathrm{max}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_bernoulli/state_energy/vs_time/max/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_bernoulli/state_energy/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_bernoulli/state_energy/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_bernoulli/state_energy/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_bernoulli/state_energy/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_bernoulli/state_energy/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_bernoulli/state_energy/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}
+
+\tikzsetnextfilename{rebuttal_figure_average_control_effort_vs_t_bernoulli}
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 5e2,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{u, \mathrm{avg}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_bernoulli/control_effort/vs_time/avg/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_bernoulli/control_effort/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_bernoulli/control_effort/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_bernoulli/control_effort/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_bernoulli/control_effort/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_bernoulli/control_effort/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_bernoulli/control_effort/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}%
+\tikzsetnextfilename{rebuttal_figure_maximum_control_effort_vs_t_bernoulli}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 2e3,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{u, \mathrm{max}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_bernoulli/control_effort/vs_time/max/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_bernoulli/control_effort/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_bernoulli/control_effort/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_bernoulli/control_effort/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_bernoulli/control_effort/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_bernoulli/control_effort/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_bernoulli/control_effort/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}
+
+\tikzsetnextfilename{rebuttal_figure_time_average_of_state_energies_vs_lambda_bernoulli}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmode = log,
+            ymode = log,
+            xmin = 1e-5,
+            xmax =  1e3,
+            ymin =  1e1,
+            ymax =  1e3,
+            xlabel = {\(\lambda\)},
+            ylabel = {State Energy},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            grid = both,
+            major grid style={Snow3},
+            minor grid style={Snow2},
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.02)},
+                anchor = south west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {max/Firebrick2, avg/DarkOrange1} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = lambda, y = mean] {data_bernoulli/state_energy/vs_lambda/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 2.5]  {data_bernoulli/state_energy/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25] {data_bernoulli/state_energy/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25]   {data_bernoulli/state_energy/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]   {data_bernoulli/state_energy/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]  {data_bernoulli/state_energy/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 97.5] {data_bernoulli/state_energy/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\frac{1}{T} \sum_{t = 1}^T c_t^{x, \mathrm{max}}\), \(50\%\) interval, \(95\%\) interval,
+                \(\frac{1}{T} \sum_{t = 1}^T c_t^{x, \mathrm{avg}}\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}%
+\tikzsetnextfilename{rebuttal_figure_time_average_of_control_efforts_vs_lambda_bernoulli}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmode = log,
+            ymode = log,
+            xmin = 1e-5,
+            xmax =  1e3,
+            ymin =  1e1,
+            ymax =  1e4,
+            xlabel = {\(\lambda\)},
+            ylabel = {Control Effort},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            grid = both,
+            major grid style={Snow3},
+            minor grid style={Snow2},
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.02)},
+                anchor = south west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {max/Firebrick2, avg/DarkOrange1} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = lambda, y = mean] {data_bernoulli/control_effort/vs_lambda/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 2.5]  {data_bernoulli/control_effort/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25] {data_bernoulli/control_effort/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25]   {data_bernoulli/control_effort/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]   {data_bernoulli/control_effort/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]  {data_bernoulli/control_effort/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 97.5] {data_bernoulli/control_effort/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\frac{1}{T} \sum_{t = 0}^{T - 1} c_t^{u, \mathrm{max}}\), \(50\%\) interval, \(95\%\) interval,
+                \(\frac{1}{T} \sum_{t = 0}^{T - 1} c_t^{u, \mathrm{avg}}\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}
+
+% After running simulation.py to generate the data for the simulation with log normal noise, rename the data/ directory to data_log_normal/.
+
+\tikzsetnextfilename{rebuttal_figure_average_state_energy_vs_t_log_normal}
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 1e2,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{x, \mathrm{avg}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_log_normal/state_energy/vs_time/avg/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_log_normal/state_energy/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_log_normal/state_energy/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_log_normal/state_energy/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_log_normal/state_energy/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_log_normal/state_energy/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_log_normal/state_energy/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}%
+\tikzsetnextfilename{rebuttal_figure_maximum_state_energy_vs_t_log_normal}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 1e3,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{x, \mathrm{max}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_log_normal/state_energy/vs_time/max/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_log_normal/state_energy/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_log_normal/state_energy/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_log_normal/state_energy/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_log_normal/state_energy/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_log_normal/state_energy/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_log_normal/state_energy/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}
+
+\tikzsetnextfilename{rebuttal_figure_average_control_effort_vs_t_log_normal}
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 5e2,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{u, \mathrm{avg}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_log_normal/control_effort/vs_time/avg/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_log_normal/control_effort/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_log_normal/control_effort/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_log_normal/control_effort/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_log_normal/control_effort/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_log_normal/control_effort/vs_time/avg/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_log_normal/control_effort/vs_time/avg/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}%
+\tikzsetnextfilename{rebuttal_figure_maximum_control_effort_vs_t_log_normal}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmin =   0,
+            xmax = 5e1,
+            ymin =   0,
+            ymax = 2e3,
+            xlabel = {\(t\)},
+            ylabel = {\(c_t^{u, \mathrm{max}}\)},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            minor x tick num = 5,
+            grid = major,
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.98)},
+                anchor = north west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {0/SpringGreen4, 0_1/DodgerBlue2, 1/MediumOrchid2} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = t, y = mean] {data_log_normal/control_effort/vs_time/max/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 2.5]  {data_log_normal/control_effort/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25] {data_log_normal/control_effort/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 25]   {data_log_normal/control_effort/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]   {data_log_normal/control_effort/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 75]  {data_log_normal/control_effort/vs_time/max/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = t, y = 97.5] {data_log_normal/control_effort/vs_time/max/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\lambda = 0\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
+                \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
+
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}
+
+\tikzsetnextfilename{rebuttal_figure_time_average_of_state_energies_vs_lambda_log_normal}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmode = log,
+            ymode = log,
+            xmin = 1e-5,
+            xmax =  1e3,
+            ymin =  1e1,
+            ymax =  1e3,
+            xlabel = {\(\lambda\)},
+            ylabel = {State Energy},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            grid = both,
+            major grid style={Snow3},
+            minor grid style={Snow2},
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.02)},
+                anchor = south west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {max/Firebrick2, avg/DarkOrange1} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = lambda, y = mean] {data_log_normal/state_energy/vs_lambda/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 2.5]  {data_log_normal/state_energy/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25] {data_log_normal/state_energy/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25]   {data_log_normal/state_energy/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]   {data_log_normal/state_energy/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]  {data_log_normal/state_energy/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 97.5] {data_log_normal/state_energy/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\frac{1}{T} \sum_{t = 1}^T c_t^{x, \mathrm{max}}\), \(50\%\) interval, \(95\%\) interval,
+                \(\frac{1}{T} \sum_{t = 1}^T c_t^{x, \mathrm{avg}}\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}%
+\tikzsetnextfilename{rebuttal_figure_time_average_of_control_efforts_vs_lambda_log_normal}%
+\begin{tikzpicture}
+    \begin{axis}[
+            scale only axis,
+            width = 10 cm,
+            height = 10 cm,
+            xmode = log,
+            ymode = log,
+            xmin = 1e-5,
+            xmax =  1e3,
+            ymin =  1e1,
+            ymax =  1e4,
+            xlabel = {\(\lambda\)},
+            ylabel = {Control Effort},
+            x label style = {
+                at = {(axis description cs:0.5,-0.05)},
+                anchor = north,
+            },
+            y label style = {
+                at = {(axis description cs:-0.05,0.5)},
+                anchor = south,
+            },
+            label style = {
+                font = \small,
+                overlay,
+            },
+            tick label style = {
+                font = \small,
+                overlay,
+            },
+            grid = both,
+            major grid style={Snow3},
+            minor grid style={Snow2},
+            legend cell align = {left},
+            legend columns = 3,
+            legend style = {
+                at = {(0.02, 0.02)},
+                anchor = south west,
+                font = \scriptsize,
+            },
+            transpose legend,
+        ]
+
+        \foreach \param/\color in {max/Firebrick2, avg/DarkOrange1} {
+            \edef\temp{\noexpand \addplot [smooth, very thick, color = \color] table [col sep = comma, header = true, x = lambda, y = mean] {data_log_normal/control_effort/vs_lambda/\param.csv};}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 2.5]  {data_log_normal/control_effort/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25] {data_log_normal/control_effort/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33, forget plot] fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 25]   {data_log_normal/control_effort/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]   {data_log_normal/control_effort/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.66]  fill between [of = lo and hi];}\temp
+
+            \addplot [name path = lo, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 75]  {data_log_normal/control_effort/vs_lambda/\param.csv};
+            \addplot [name path = hi, smooth, draw = none, forget plot] table [col sep = comma, header = true, x = lambda, y = 97.5] {data_log_normal/control_effort/vs_lambda/\param.csv};
+            \edef\temp{\noexpand \addplot [\color, fill opacity = 0.33] fill between [of = lo and hi];}\temp
+        }
+
+        \legend{\(\frac{1}{T} \sum_{t = 0}^{T - 1} c_t^{u, \mathrm{max}}\), \(50\%\) interval, \(95\%\) interval,
+                \(\frac{1}{T} \sum_{t = 0}^{T - 1} c_t^{u, \mathrm{avg}}\), \(50\%\) interval, \(95\%\) interval}
+    \end{axis}
+    \useasboundingbox (-1, -1) rectangle (10.25, 10.25);
+\end{tikzpicture}
+
+\end{document}
