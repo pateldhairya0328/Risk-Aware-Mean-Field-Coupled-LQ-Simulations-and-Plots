@@ -30,12 +30,7 @@
             xmax =  50,
             ymin =   0,
             ymax = 100,
-            xlabel = {\(t\)},
             ylabel = {\(c_t^{x, \mathrm{avg}}\)},
-            x label style = {
-                at = {(axis description cs:0.5,-0.05625)},
-                anchor = north,
-            },
             y label style = {
                 at = {(axis description cs:-0.05,0.5)},
                 anchor = south,
@@ -80,7 +75,7 @@
                 \(\lambda = 0.1\), \(50\%\) interval, \(95\%\) interval,
                 \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
     \end{axis}
-    \useasboundingbox (-1.125, -0.75) rectangle (10.25, 5.25);
+    \useasboundingbox (-1.1, -0.35) rectangle (10.25, 5.125);
 \end{tikzpicture}%
 \tikzsetnextfilename{article_figure_maximum_state_energy_vs_t}%
 \begin{tikzpicture}
@@ -92,15 +87,14 @@
             xmax =   50,
             ymin =    0,
             ymax = 1000,
-            xlabel = {\(t\)},
             ylabel = {\(c_t^{x, \mathrm{max}}\)},
-            x label style = {
-                at = {(axis description cs:0.5,-0.05625)},
-                anchor = north,
-            },
             y label style = {
                 at = {(axis description cs:-0.0625,0.5)},
                 anchor = south,
+            },
+            y tick label style = {
+                /pgf/number format/.cd,
+                set thousands separator={}
             },
             label style = {
                 font = \small,
@@ -143,7 +137,7 @@
                 \(\lambda = 1\), \(50\%\) interval, \(95\%\) interval}
 
     \end{axis}
-    \useasboundingbox (-1.125, -0.75) rectangle (10.25, 5.25);
+    \useasboundingbox (-1.1, -0.35) rectangle (10.25, 5.125);
 \end{tikzpicture}
 
 \tikzsetnextfilename{article_figure_time_average_of_state_energies_vs_lambda}%
@@ -157,12 +151,7 @@
             xmax =  1e3,
             ymin =    0,
             ymax =  450,
-            xlabel = {\(\lambda\)},
             ylabel = {State Energy},
-            x label style = {
-                at = {(axis description cs:0.5,-0.06875)},
-                anchor = north,
-            },
             y label style = {
                 at = {(axis description cs:-0.0625,0.5)},
                 anchor = south,
@@ -204,7 +193,7 @@
         \legend{\(\frac{1}{T} \sum_{t = 1}^T c_t^{x, \mathrm{max}}\), \(50\%\) interval, \(95\%\) interval,
                 \(\frac{1}{T} \sum_{t = 1}^T c_t^{x, \mathrm{avg}}\), \(50\%\) interval, \(95\%\) interval}
     \end{axis}
-    \useasboundingbox (-1.125, -0.75) rectangle (10.25, 5.25);
+    \useasboundingbox (-1.1, -0.415) rectangle (10.25, 5.125);
 \end{tikzpicture}%
 \tikzsetnextfilename{article_figure_time_average_of_control_efforts_vs_lambda}%
 \begin{tikzpicture}
@@ -216,13 +205,8 @@
             xmin = 1e-5,
             xmax =  1e3,
             ymin =    0,
-            ymax =  900,
-            xlabel = {\(\lambda\)},
+            ymax =  890,
             ylabel = {Control Effort},
-            x label style = {
-                at = {(axis description cs:0.5,-0.06875)},
-                anchor = north,
-            },
             y label style = {
                 at = {(axis description cs:-0.0625,0.5)},
                 anchor = south,
@@ -264,7 +248,7 @@
         \legend{\(\frac{1}{T} \sum_{t = 0}^{T - 1} c_t^{u, \mathrm{max}}\), \(50\%\) interval, \(95\%\) interval,
                 \(\frac{1}{T} \sum_{t = 0}^{T - 1} c_t^{u, \mathrm{avg}}\), \(50\%\) interval, \(95\%\) interval}
     \end{axis}
-    \useasboundingbox (-1.125, -0.75) rectangle (10.25, 5.25);
+    \useasboundingbox (-1.1, -0.415) rectangle (10.25, 5.125);
 \end{tikzpicture}
 
 \end{document}
